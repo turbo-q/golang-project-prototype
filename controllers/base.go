@@ -11,9 +11,9 @@ type BaseController struct {
 }
 
 type response struct {
-	ResponseCode int         `json:"response_code"`
-	ResponseMsg  string      `json:"response_msg"`
-	ResponseData interface{} `json:"response_data"`
+	ResponseCode int         `json:"F_responseNo"`
+	ResponseMsg  string      `json:"F_responseMsg"`
+	ResponseData interface{} `json:"F_data"`
 }
 
 func (this *BaseController) renderJSON(code int, msg string, data interface{}) {
