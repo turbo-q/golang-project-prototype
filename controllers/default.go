@@ -10,5 +10,5 @@ type Response struct {
 }
 
 func (this *MainController) Get() {
-	this.RenderJSON(10000, "成功", "没有数据")
+	this.renderSuccess("成功", "没有数据")
 }
