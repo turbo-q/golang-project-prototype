@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"demo/global"
+	"demo/global/resp"
 	"net/http"
 
 	"github.com/astaxie/beego"
@@ -9,44 +9,49 @@ import (
 
 type BaseController struct {
 	beego.Controller
+	A string
 }
 
 type ResponseData map[string]interface{}
 
 //JSON数据的返回
 
+func (this BaseController) Test() string {
+	return "测试"
+}
+
 func (this *BaseController) renderJSON(code int, msg string, data interface{}) {
-	resp := ResponseData{
+	res := ResponseData{
 		"F_responseNo":  code,
 		"F_responseMsg": msg,
 	}
 	if data != nil {
-		resp["F_data"] = data
+		res["F_data"] = data
 	}
 
-	if code == global.PARAMS_ERROR_CODE { //参数错误
+	if code == resp.PARAMS_ERROR_CODE { //参数错误
 		this.Ctx.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 		this.Ctx.ResponseWriter.WriteHeader(http.StatusBadRequest)
 	}
-	if code == global.TOKEN_ERROR_CODE { //token(access token , refresh access token) 错误
+	if code == resp.TOKEN_ERROR_CODE { //token(access token , refresh access token) 错误
 		this.Ctx.ResponseWriter.Header().Set("Content-Type", "application/json; charset=utf-8")
 		this.Ctx.ResponseWriter.WriteHeader(http.StatusForbidden)
 	}
 
-	this.Data["json"] = resp
+	this.Data["json"] = res
 	this.ServeJSON()
 }
 
 func (this *BaseController) renderSuccessJSON(msg string, data interface{}) {
-	this.renderJSON(global.SUCCESS_CODE, msg, data)
+	this.renderJSON(resp.SUCCESS_CODE, msg, data)
 }
 
 func (this *BaseController) renderErrorJSON(msg string, data interface{}) {
-	this.renderJSON(global.ERROR_CODE, msg, data)
+	this.renderJSON(resp.ERROR_CODE, msg, data)
 }
 
 func (this *BaseController) renderParamsErrorJSON(msg string, data interface{}) {
-	this.renderJSON(global.PARAMS_ERROR_CODE, msg, data)
+	this.renderJSON(resp.PARAMS_ERROR_CODE, msg, data)
 }
 
 // 没有权限
@@ -61,7 +66,7 @@ func (this *BaseController) echo401() {
 	this.StopRun()
 }
 
-//重定向
+//重定向302
 func (this *BaseController) redirect(url string) {
 	this.Redirect(url, http.StatusFound)
 	this.StopRun()

@@ -5,5 +5,5 @@ type MainController struct {
 }
 
 func (this *MainController) Get() {
-	this.echo403()
+	this.renderSuccessJSON("成功", nil)
 }
