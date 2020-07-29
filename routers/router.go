@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"demo/controllers"
+	"recitationSquare/controllers"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"

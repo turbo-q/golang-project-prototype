@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "demo/routers"
+	_ "recitationSquare/routers"
 
 	"github.com/astaxie/beego"
 )
