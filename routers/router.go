@@ -1,9 +1,8 @@
 package routers
 
 import (
-	"recitationSquare/controllers"
-
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
 )
 
@@ -19,5 +18,16 @@ func allowCORS() {
 
 func init() {
 	allowCORS()
-	beego.Router("/", &controllers.MainController{})
+	ns :=
+		beego.NewNamespace("/api",
+			//此处正式版时改为验证加密请求
+			beego.NSCond(func(ctx *context.Context) bool {
+				if ctx.Input.Query("apiToken") == "CFIsGgvkonYEoVURomNZCk1HwshSQhDw" {
+					return true
+				}
+				return false
+			}),
+		)
+	beego.AddNamespace(ns)
+	// beego.Router("/", &controllers.MainController{})
 }
