@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"recitationSquare/global"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/plugins/cors"
@@ -20,9 +22,9 @@ func init() {
 	allowCORS()
 	ns :=
 		beego.NewNamespace("/api",
-			//此处正式版时改为验证加密请求
+			//请求校验
 			beego.NSCond(func(ctx *context.Context) bool {
-				if ctx.Input.Query("apiToken") == "CFIsGgvkonYEoVURomNZCk1HwshSQhDw" {
+				if ctx.Input.Query("apiToken") == global.API_TOKEN {
 					return true
 				}
 				return false
