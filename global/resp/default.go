@@ -1,10 +1,1 @@
 package resp
-
-// 状态响应码
-const (
-	SUCCESS_CODE      = 10000
-	ERROR_CODE        = 10001
-	PARAMS_ERROR_CODE = 10002
-	TOKEN_ERROR_CODE  = 10003
-	NOACCESS_CODE     = 10004
-)
