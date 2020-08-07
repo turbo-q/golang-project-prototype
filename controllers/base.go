@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"recitationSquare/global/resp"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
@@ -78,6 +79,12 @@ func (this *BaseController) renderJSON(code int, msg string, data interface{}) {
 func (this *BaseController) renderSuccessJSON(msg string, data interface{}) {
 	this.renderJSON(SUCCESS_CODE, msg, data)
 }
+
+func (this *BaseController) renderErrorJSON(msg string, data interface{}) {
+	this.renderJSON(resp.ERROR_CODE, msg, data)
+}
+
+// 参数错误  status 400
 func (this *BaseController) renderParamsErrorJSON(msg string, data interface{}) {
 	this.renderJSON(PARAMS_ERROR_CODE, msg, data)
 }
