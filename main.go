@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "recitationSquare/config"
-	_ "recitationSquare/routers"
+	_ "golang-project-prototype/config"
+	_ "golang-project-prototype/routers"
 
 	"github.com/astaxie/beego"
 )

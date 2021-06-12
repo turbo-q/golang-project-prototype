@@ -1,7 +1,8 @@
 package routers
 
 import (
-	"recitationSquare/global"
+	"golang-project-prototype/config"
+	"golang-project-prototype/controllers"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
@@ -18,18 +19,20 @@ func allowCORS() {
 		AllowCredentials: true}))
 }
 
+// 全局的prepare钩子，打印一些必要的信息
+func globalPrepare() {
+	beego.InsertFilter("*", beego.BeforeRouter, controllers.GlobalPrepare)
+}
+
 func init() {
 	allowCORS()
+	globalPrepare()
 	ns :=
 		beego.NewNamespace("/api",
 			//请求校验
 			beego.NSCond(func(ctx *context.Context) bool {
-				if ctx.Input.Query("apiToken") == global.API_TOKEN {
-					return true
-				}
-				return false
+				return ctx.Input.Query("apiToken") == config.DefaultConfig.ApiToken
 			}),
 		)
 	beego.AddNamespace(ns)
-	// beego.Router("/", &controllers.MainController{})
 }

@@ -1,8 +1,8 @@
 package db
 
 import (
+	"golang-project-prototype/config"
 	"log"
-	"recitationSquare/config"
 	"time"
 
 	"github.com/jinzhu/gorm"
