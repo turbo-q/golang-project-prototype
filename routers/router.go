@@ -9,6 +9,7 @@ import (
 	"github.com/astaxie/beego/plugins/cors"
 )
 
+// cors config
 func allowCORS() {
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -27,12 +28,15 @@ func globalPrepare() {
 func init() {
 	allowCORS()
 	globalPrepare()
+	// router 使用namespace的形式进行构建
+	// 结合restful能更好的表现层级关系
 	ns :=
-		beego.NewNamespace("/api",
+		beego.NewNamespace("/v1",
 			//请求校验
 			beego.NSCond(func(ctx *context.Context) bool {
 				return ctx.Input.Query("apiToken") == config.DefaultConfig.ApiToken
 			}),
+			beego.NSRouter("/", &controllers.MainController{}),
 		)
 	beego.AddNamespace(ns)
 }

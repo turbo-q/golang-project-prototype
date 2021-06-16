@@ -16,7 +16,7 @@ func init() {
 	client := &http.Client{
 		Timeout: time.Duration(config.DefaultConfig.HttpTimeout) * time.Second,
 	}
-	clientpool.Store(model.CLIENT_DEFAULT, client)
+	clientpool.Store(model.CLIENT_DEFAULT, (*httpClient)(client))
 }
 
 // 根据flag获取httpclient

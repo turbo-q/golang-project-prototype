@@ -33,3 +33,14 @@ func mysqlInit() {
 func GetDBDefault() *gorm.DB {
 	return dbDefault
 }
+
+// 由于gorm将not found也作业error
+// 固进行区分严重错误
+func GormErrorIsFatalError(d *gorm.DB) bool {
+	return d.Error != nil && !GormErrorIsFatalError(d)
+}
+
+// not found
+func GormErrorIsNotFound(d *gorm.DB) bool {
+	return gorm.IsRecordNotFoundError(d.Error)
+}

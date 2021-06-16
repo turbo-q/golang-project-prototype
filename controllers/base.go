@@ -70,8 +70,16 @@ func (c *BaseController) renderSuccessJSON(msg string, data interface{}) {
 	c.renderJSON(model.SUCCESS_CODE, msg, data)
 }
 
-func (c *BaseController) renderErrorJSON(msg string, data interface{}) {
-	c.renderJSON(model.ERROR_CODE, msg, data)
+// 错误响应
+func (c *BaseController) renderErrorJSON(err error, data interface{}) {
+	// 如果是定义的model error，有相应的code类型
+	// 不会存在类型为ModelError但是值为nil的情况
+	if mErr, ok := err.(*model.ModelError); ok {
+		c.renderJSON(mErr.Code, mErr.Msg, data)
+		return
+	}
+
+	c.renderUnknownErrorJSON(err.Error(), data)
 }
 
 // 参数错误  status 400
