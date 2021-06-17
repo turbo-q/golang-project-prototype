@@ -8,6 +8,7 @@ var (
 	DefaultConfig   defaultConfig
 	DBConfig        dbConfig
 	SnowflakeConfig snowflakeConfig
+	RedisConfig     redisConfig
 )
 
 // default config
@@ -36,16 +37,31 @@ type snowflakeConfig struct {
 	AuthSecret string
 }
 
+// redis config
+type redisConfig struct {
+	RedisMaxIdle     int
+	RedisIdleTimeout int
+	RedisHost        string
+	RedisPassword    string
+}
+
 func init() {
 	iniconf, _ := config.NewConfig("ini", "conf/app.conf")
 
 	DefaultConfig.Env = iniconf.String("runmode")
 
 	section := "golang-project-prototype"
+	// default config
 	DefaultConfig.HttpTimeout, _ = iniconf.Int(section + "::httpTimeout")
 	DefaultConfig.ApiToken = iniconf.String(section + "::apiToken")
 
-	section = "db-config"
+	// redis config
+	RedisConfig.RedisIdleTimeout, _ = iniconf.Int(section + "::rdIdleTimeout")
+	RedisConfig.RedisMaxIdle, _ = iniconf.Int(section + "::rdMaxIdle")
+	RedisConfig.RedisPassword = iniconf.String(section + "::rdPassword")
+	RedisConfig.RedisHost = iniconf.String(section + "::rdHost")
+
+	// db config
 	DBConfig.DBName = iniconf.String(section + "::dbName")
 	DBConfig.DBUsername = iniconf.String(section + "::dbUsername")
 	DBConfig.DBPassword = iniconf.String(section + "::dbPassword")
@@ -55,8 +71,10 @@ func init() {
 	DBConfig.DBMaxConn, _ = iniconf.Int(section + "::dbMaxConn")
 	DBConfig.DBMaxConnLifetime, _ = iniconf.Int(section + "::dbMaxConnLifetime")
 
-	appName := "dreamSnowflake"
-	SnowflakeConfig.Domain = iniconf.String(appName + "::domain")
-	SnowflakeConfig.AuthUser = iniconf.String(appName + "::authUser")
-	SnowflakeConfig.AuthSecret = iniconf.String(appName + "::authUserSecurity")
+	// snowflake config
+	section = "dreamSnowflake"
+	SnowflakeConfig.Domain = iniconf.String(section + "::domain")
+	SnowflakeConfig.AuthUser = iniconf.String(section + "::authUser")
+	SnowflakeConfig.AuthSecret = iniconf.String(section + "::authUserSecurity")
+
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"golang-project-prototype/library/util"
 	"golang-project-prototype/library/util/logger"
+	_ "golang-project-prototype/library/util/rdc"
 	"golang-project-prototype/model"
 	"net/url"
 )
@@ -25,5 +26,4 @@ func (c *MainController) Get() {
 	}
 
 	c.renderSuccessJSON("成功", resp)
-
 }
