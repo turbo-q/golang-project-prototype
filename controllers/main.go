@@ -3,7 +3,7 @@ package controllers
 import (
 	"golang-project-prototype/library/util"
 	"golang-project-prototype/library/util/logger"
-	_ "golang-project-prototype/library/util/rdc"
+
 	"golang-project-prototype/model"
 	"net/url"
 )
