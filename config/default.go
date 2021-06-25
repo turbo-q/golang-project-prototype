@@ -76,5 +76,4 @@ func init() {
 	SnowflakeConfig.Domain = iniconf.String(section + "::domain")
 	SnowflakeConfig.AuthUser = iniconf.String(section + "::authUser")
 	SnowflakeConfig.AuthSecret = iniconf.String(section + "::authUserSecurity")
-
 }

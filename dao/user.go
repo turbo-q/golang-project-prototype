@@ -4,7 +4,7 @@ import (
 	"golang-project-prototype/library/util/db"
 	"golang-project-prototype/model"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 /*
