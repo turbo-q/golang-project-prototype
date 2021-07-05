@@ -34,7 +34,7 @@ func mysqlInit() {
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Error("获取sqlDB失败", err)
+		logger.Error("获取底层通用数据库接口sqlDB失败", err)
 	}
 
 	sqlDB.SetMaxIdleConns(config.DBConfig.DBMaxIdle)                                         // 连接池最大闲置连接数量
