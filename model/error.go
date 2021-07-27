@@ -24,3 +24,12 @@ func (m ModelError) Error() string {
 		return m.Msg
 	}
 }
+
+// db error
+type DBError struct {
+	Msg string
+}
+
+func (d DBError) Error() string {
+	return "db:" + d.Msg
+}
