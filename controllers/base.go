@@ -79,6 +79,12 @@ func (c *BaseController) renderErrorJSON(err error, data interface{}) {
 		return
 	}
 
+	// db error
+	if dbErr, ok := err.(*model.DBError); ok {
+		c.renderJSON(model.DBERROR_CODE, dbErr.Msg, data)
+		return
+	}
+
 	c.renderUnknownErrorJSON(err.Error(), data)
 }
 

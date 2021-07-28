@@ -8,6 +8,7 @@ const (
 	PARAMS_ERROR_CODE // 参数错误
 	TOKEN_ERROR_CODE  // token认证错误
 	NOACCESS_CODE     // 未验证
+	DBERROR_CODE      // DB 错误
 )
 
 // client flag
