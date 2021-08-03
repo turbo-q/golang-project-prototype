@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"golang-project-prototype/library/util/logger"
 	"golang-project-prototype/model"
 	"net/http"
+	"net/url"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
@@ -64,6 +66,25 @@ func (c *BaseController) renderJSON(code int, msg string, data interface{}) {
 	}
 	c.Data["json"] = res
 	c.ServeJSON()
+}
+
+// finish 打印输出
+func (c *BaseController) Finish() {
+	var (
+		values url.Values
+	)
+	if c.Ctx.Input.Method() == http.MethodGet {
+		values = c.Ctx.Request.URL.Query()
+	} else {
+		values = c.Ctx.Request.Form
+	}
+	requestInfo := map[string]interface{}{
+		"method":      c.Ctx.Input.Method(),
+		"request uri": c.Ctx.Input.URI(),
+		"values":      values.Encode(),
+		"content":     c.Data["json"],
+	}
+	logger.Infom("响应请求", requestInfo)
 }
 
 func (c *BaseController) renderSuccessJSON(msg string, data interface{}) {
