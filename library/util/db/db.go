@@ -4,7 +4,6 @@ import (
 	"errors"
 	"golang-project-prototype/config"
 	"golang-project-prototype/library/util/logger"
-	"golang-project-prototype/model"
 	"log"
 	"time"
 
@@ -17,7 +16,7 @@ var dbDefault *gorm.DB
 
 func init() {
 	mysqlInit()
-	migrate()
+	migration()
 }
 
 func mysqlInit() {
@@ -42,13 +41,6 @@ func mysqlInit() {
 	sqlDB.SetConnMaxLifetime(time.Second * time.Duration(config.DBConfig.DBMaxConnLifetime)) // 最大可复用时间                                                           // 不使用复数表名
 
 	dbDefault = db
-}
-
-// db migrate
-func migrate() {
-	dbDefault.
-		Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4").
-		AutoMigrate(&model.User{})
 }
 
 func GetDBDefault() *gorm.DB {

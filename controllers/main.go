@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"golang-project-prototype/library/util"
+	"golang-project-prototype/library/util/http"
 	"golang-project-prototype/library/util/logger"
 
 	"golang-project-prototype/model"
@@ -17,7 +17,7 @@ func (c *MainController) Get() {
 	values.Add("postId", "1")
 
 	var resp interface{}
-	err := util.GetHttpClient(model.CLIENT_DEFAULT).
+	err := http.GetHttpClient(model.CLIENT_DEFAULT).
 		GetByReceiver("http://jsonplaceholder.typicode.com/comments", values, &resp)
 	if err != nil {
 		logger.Error("请求失败", err)
