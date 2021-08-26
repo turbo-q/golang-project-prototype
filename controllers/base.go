@@ -42,7 +42,7 @@ func (c *BaseController) checkParams(params interface{}) bool {
 
 type ResponseData map[string]interface{}
 
-func (c *BaseController) renderJSON(code int, msg string, data interface{}) {
+func (c *BaseController) renderJSON(code int, msg string, data interface{}, name ...string) {
 	c.Ctx.Output.Header("Content-Type", "application/json")
 	switch code {
 	case model.PARAMS_ERROR_CODE:
@@ -62,7 +62,11 @@ func (c *BaseController) renderJSON(code int, msg string, data interface{}) {
 		"F_responseMsg": msg,
 	}
 	if data != nil {
-		res["F_data"] = data
+		if len(name) > 0 {
+			res[name[0]] = data
+		} else {
+			res["F_data"] = data
+		}
 	}
 	c.Data["json"] = res
 	c.ServeJSON()
@@ -87,34 +91,34 @@ func (c *BaseController) Finish() {
 	logger.Infom("响应请求", requestInfo)
 }
 
-func (c *BaseController) renderSuccessJSON(msg string, data interface{}) {
-	c.renderJSON(model.SUCCESS_CODE, msg, data)
+func (c *BaseController) renderSuccessJSON(msg string, data interface{}, name ...string) {
+	c.renderJSON(model.SUCCESS_CODE, msg, data, name...)
 }
 
 // 错误响应
-func (c *BaseController) renderErrorJSON(err error, data interface{}) {
+func (c *BaseController) renderErrorJSON(err error, data interface{}, name ...string) {
 	// 如果是定义的model error，有相应的code类型
 	// 不会存在类型为ModelError但是值为nil的情况
 	if mErr, ok := err.(*model.ModelError); ok {
-		c.renderJSON(mErr.Code, mErr.Msg, data)
+		c.renderJSON(mErr.Code, mErr.Msg, data, name...)
 		return
 	}
 
 	// db error
 	if dbErr, ok := err.(*model.DBError); ok {
-		c.renderJSON(model.DBERROR_CODE, dbErr.Msg, data)
+		c.renderJSON(model.DBERROR_CODE, dbErr.Msg, data, name...)
 		return
 	}
 
-	c.renderUnknownErrorJSON(err.Error(), data)
+	c.renderUnknownErrorJSON(err.Error(), data, name...)
 }
 
 // 参数错误  status 400
-func (c *BaseController) renderParamsErrorJSON(msg string, data interface{}) {
-	c.renderJSON(model.PARAMS_ERROR_CODE, msg, data)
+func (c *BaseController) renderParamsErrorJSON(msg string, data interface{}, name ...string) {
+	c.renderJSON(model.PARAMS_ERROR_CODE, msg, data, name...)
 }
 
 // 未知错误，多用于内部处理错误或者不确定的错误
-func (c *BaseController) renderUnknownErrorJSON(msg string, data interface{}) {
-	c.renderJSON(model.ERROR_CODE, msg, data)
+func (c *BaseController) renderUnknownErrorJSON(msg string, data interface{}, name ...string) {
+	c.renderJSON(model.ERROR_CODE, msg, data, name...)
 }
