@@ -5,7 +5,7 @@ import (
 )
 
 // User struct for table user
-type User internal.User
+type User = internal.User
 
 // **********************************
 // api
@@ -28,7 +28,7 @@ type UserServiceGetListReq struct {
 type UserServiceGetListRes struct {
 	List []UserListItem `json:"list"`
 	// 可以对internal.User 进行扩展
-	internal.User
+	User
 	Password string `json:"-"`
 }
 
