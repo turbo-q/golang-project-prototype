@@ -54,6 +54,7 @@ func GormErrorIsFatalError(d *gorm.DB) bool {
 }
 
 // not found,只有在first、last、take方法找不到时会ErrRecordNotFound
+// 可以使用Find代替，就可以避免该错误
 func GormErrorIsNotFound(d *gorm.DB) bool {
 	return errors.Is(d.Error, gorm.ErrRecordNotFound)
 }
