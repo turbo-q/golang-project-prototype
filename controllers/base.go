@@ -88,7 +88,7 @@ func (c *BaseController) Finish() {
 		"values":      values.Encode(),
 		"content":     c.Data["json"],
 	}
-	logger.Infom("响应请求", requestInfo)
+	logger.Info("响应请求", requestInfo)
 }
 
 func (c *BaseController) renderSuccessJSON(msg string, data interface{}, name ...string) {

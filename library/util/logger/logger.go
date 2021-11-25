@@ -2,87 +2,108 @@ package logger
 
 import (
 	"fmt"
-	"golang-project-prototype/config"
+	"net/http"
 	"net/url"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-var log *logrus.Logger
+var logger_ *zap.SugaredLogger
 
 const delimiter = "                    "
 
 func init() {
-	log = logrus.New()
-	if config.DefaultConfig.Env == "prod" {
-		log.Formatter = new(logrus.JSONFormatter)
-	} else {
-		log.Formatter = new(logrus.TextFormatter)
+	// 日志级别
+	logLevel := "DEBUG"
+
+	atomicLevel := zap.NewAtomicLevel()
+	switch logLevel {
+	case "DEBUG":
+		atomicLevel.SetLevel(zapcore.DebugLevel)
+	case "INFO":
+		atomicLevel.SetLevel(zapcore.InfoLevel)
+	case "WARN":
+		atomicLevel.SetLevel(zapcore.WarnLevel)
+	case "ERROR":
+		atomicLevel.SetLevel(zapcore.ErrorLevel)
+	case "DPANIC":
+		atomicLevel.SetLevel(zapcore.DPanicLevel)
+	case "PANIC":
+		atomicLevel.SetLevel(zapcore.PanicLevel)
+	case "FATAL":
+		atomicLevel.SetLevel(zapcore.FatalLevel)
 	}
-	log.Level = logrus.InfoLevel
-	log.Out = os.Stdout
+	encoderConfig := zapcore.EncoderConfig{
+		TimeKey:        "time",
+		LevelKey:       "level",
+		NameKey:        "name",
+		CallerKey:      "line",
+		MessageKey:     "msg",
+		FunctionKey:    "func",
+		StacktraceKey:  "stacktrace",
+		LineEnding:     zapcore.DefaultLineEnding,
+		EncodeLevel:    zapcore.LowercaseLevelEncoder,
+		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.000"),
+		EncodeDuration: zapcore.SecondsDurationEncoder,
+		EncodeCaller:   zapcore.FullCallerEncoder,
+		EncodeName:     zapcore.FullNameEncoder,
+	}
+
+	zapCore := zapcore.NewCore(
+		zapcore.NewJSONEncoder(encoderConfig),
+		zapcore.AddSync(os.Stdout),
+		atomicLevel,
+	)
+	logger := zap.New(zapCore, zap.AddCaller())
+	defer logger.Sync()
+
+	logger_ = logger.Sugar()
 }
 
-func map2LogFields(m map[string]interface{}) logrus.Fields {
-	return logrus.Fields(m)
-}
-
-func Info(msg ...interface{}) {
-	log.Info(msg...)
+func Info(args ...interface{}) {
+	logger_.Info(args...)
 	fmt.Println(delimiter)
 }
 
 func Infof(format string, args ...interface{}) {
-	log.Infof(format, args...)
+	logger_.Infof(format, args...)
 	fmt.Println(delimiter)
 }
 
-func Infom(msg string, m map[string]interface{}) {
-	log.WithFields(map2LogFields(m)).Info(msg)
+func Debug(args ...interface{}) {
+	logger_.Debug(args...)
 	fmt.Println(delimiter)
 }
 
-func Warn(msg string) {
-	log.Warn(msg)
+func Debugf(format string, args ...interface{}) {
+	logger_.Debugf(format, args...)
 	fmt.Println(delimiter)
 }
 
-func Warnf(format string, args ...interface{}) {
-	log.Warnf(format, args...)
+func Error(desc string, err error) {
+	logger_.Errorw(desc, "error", err)
 	fmt.Println(delimiter)
 }
 
-func Error(msg string, err error) {
-	m := map[string]interface{}{
-		"error": err,
+func Errorf(format string, err error, args ...interface{}) {
+	desc := fmt.Sprintf(format, args...)
+	logger_.Errorw(desc, "error", err)
+	fmt.Println(delimiter)
+}
+
+// http request
+func Request(desc, url, method string, values url.Values) {
+	if method == http.MethodGet {
+		url += "?" + values.Encode()
 	}
-	log.WithFields(map2LogFields(m)).Error(msg)
+	logger_.Infow(desc, "url", url, "method", method, "values", values)
 	fmt.Println(delimiter)
 }
 
-func Errorf(format string, err error, f ...interface{}) {
-	m := map[string]interface{}{"error": err}
-	log.WithFields(map2LogFields(m)).Errorf(format, f...)
-	fmt.Println(delimiter)
-}
-
-//	http请求
-func Request(msg, method, url string, values url.Values) {
-	m := map[string]interface{}{
-		"method": method,
-		"url":    url,
-		"values": values.Encode(),
-	}
-	log.WithFields(map2LogFields(m)).Info(msg)
-	fmt.Println(delimiter)
-}
-
-// http 响应
-func Response(msg string, resp interface{}) {
-	m := map[string]interface{}{
-		"response": resp,
-	}
-	log.WithFields(map2LogFields(m)).Info(msg)
+// http response
+func Response(desc string, response interface{}) {
+	logger_.Infow(desc, "response", response)
 	fmt.Println(delimiter)
 }

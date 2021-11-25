@@ -26,7 +26,7 @@ func GlobalPrepare(ctx *context.Context) {
 		"ip":          ctx.Input.IP(),
 		"domain":      ctx.Input.Domain(),
 	}
-	logger.Infom("收到请求", requestInfo)
+	logger.Info("收到请求", requestInfo)
 }
 
 // CORS cross-origin resource share
