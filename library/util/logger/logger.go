@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -106,4 +107,16 @@ func Request(desc, url, method string, values url.Values) {
 func Response(desc string, response interface{}) {
 	logger_.Infow(desc, "response", response)
 	fmt.Println(delimiter)
+}
+
+// debug file，如果日志太多，使用文件单独查看比较方便
+func DebugFile(path string, data interface{}) {
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0777)
+	if err != nil {
+		Error("创建文件失败", err)
+		return
+	}
+	jb, _ := json.Marshal(&data)
+	f.Write(jb)
+	f.Close()
 }
