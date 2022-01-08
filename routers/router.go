@@ -2,7 +2,7 @@ package routers
 
 import (
 	"golang-project-prototype/config"
-	"golang-project-prototype/controllers"
+	v1 "golang-project-prototype/controllers/v1"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
@@ -10,12 +10,12 @@ import (
 
 // cors config
 func allowCORS() {
-	beego.InsertFilter("*", beego.BeforeRouter, controllers.CORS)
+	beego.InsertFilter("*", beego.BeforeRouter, CORS)
 }
 
 // 全局的prepare钩子，打印一些必要的信息
 func globalPrepare() {
-	beego.InsertFilter("*", beego.BeforeRouter, controllers.GlobalPrepare)
+	beego.InsertFilter("*", beego.BeforeRouter, GlobalPrepare)
 }
 
 func init() {
@@ -29,7 +29,7 @@ func init() {
 			beego.NSCond(func(ctx *context.Context) bool {
 				return ctx.Input.Query("apiToken") == config.DefaultConfig.ApiToken
 			}),
-			beego.NSRouter("/", &controllers.MainController{}),
+			beego.NSRouter("/", &v1.MainController{}),
 		)
 	beego.AddNamespace(ns)
 }

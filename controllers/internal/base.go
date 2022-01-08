@@ -1,4 +1,4 @@
-package controllers
+package internal
 
 import (
 	"golang-project-prototype/library/util/logger"
@@ -15,13 +15,13 @@ type BaseController struct {
 }
 
 // 验证参数和解析数据
-func (c *BaseController) checkParams(params interface{}) bool {
+func (c *BaseController) CheckParams(params interface{}) bool {
 	if err := c.ParseForm(params); err != nil {
 		/*
 			指针错误一般不会发生，可能发生的错误在
 			于解析时类型不匹配，即参数错误
 		*/
-		c.renderParamsErrorJSON("参数错误", nil)
+		c.RenderParamsErrorJSON("参数错误", nil)
 		return false
 	}
 
@@ -31,18 +31,18 @@ func (c *BaseController) checkParams(params interface{}) bool {
 		return true
 	} else {
 		for _, err := range valid.Errors {
-			c.renderParamsErrorJSON(err.Message, nil)
+			c.RenderParamsErrorJSON(err.Message, nil)
 			return false
 		}
 	}
 
-	c.renderParamsErrorJSON("参数错误", nil)
+	c.RenderParamsErrorJSON("参数错误", nil)
 	return false
 }
 
 type ResponseData map[string]interface{}
 
-func (c *BaseController) renderJSON(code int, msg string, data interface{}, name ...string) {
+func (c *BaseController) RenderJSON(code int, msg string, data interface{}, name ...string) {
 	c.Ctx.Output.Header("Content-Type", "application/json")
 	switch code {
 	case model.PARAMS_ERROR_CODE:
@@ -91,34 +91,34 @@ func (c *BaseController) Finish() {
 	logger.Info("响应请求", requestInfo)
 }
 
-func (c *BaseController) renderSuccessJSON(msg string, data interface{}, name ...string) {
-	c.renderJSON(model.SUCCESS_CODE, msg, data, name...)
+func (c *BaseController) RenderSuccessJSON(msg string, data interface{}, name ...string) {
+	c.RenderJSON(model.SUCCESS_CODE, msg, data, name...)
 }
 
 // 错误响应
-func (c *BaseController) renderErrorJSON(err error, data interface{}, name ...string) {
+func (c *BaseController) RenderErrorJSON(err error, data interface{}, name ...string) {
 	// 如果是定义的model error，有相应的code类型
 	// 不会存在类型为ModelError但是值为nil的情况
 	if mErr, ok := err.(*model.ModelError); ok {
-		c.renderJSON(mErr.Code, mErr.Msg, data, name...)
+		c.RenderJSON(mErr.Code, mErr.Msg, data, name...)
 		return
 	}
 
 	// db error
 	if dbErr, ok := err.(*model.DBError); ok {
-		c.renderJSON(model.DBERROR_CODE, dbErr.Msg, data, name...)
+		c.RenderJSON(model.DBERROR_CODE, dbErr.Msg, data, name...)
 		return
 	}
 
-	c.renderUnknownErrorJSON(err.Error(), data, name...)
+	c.RenderUnknownErrorJSON(err.Error(), data, name...)
 }
 
 // 参数错误  status 400
-func (c *BaseController) renderParamsErrorJSON(msg string, data interface{}, name ...string) {
-	c.renderJSON(model.PARAMS_ERROR_CODE, msg, data, name...)
+func (c *BaseController) RenderParamsErrorJSON(msg string, data interface{}, name ...string) {
+	c.RenderJSON(model.PARAMS_ERROR_CODE, msg, data, name...)
 }
 
 // 未知错误，多用于内部处理错误或者不确定的错误
-func (c *BaseController) renderUnknownErrorJSON(msg string, data interface{}, name ...string) {
-	c.renderJSON(model.ERROR_CODE, msg, data, name...)
+func (c *BaseController) RenderUnknownErrorJSON(msg string, data interface{}, name ...string) {
+	c.RenderJSON(model.ERROR_CODE, msg, data, name...)
 }

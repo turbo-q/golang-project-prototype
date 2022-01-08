@@ -1,15 +1,16 @@
-package controllers
+package v1
 
 import (
 	"golang-project-prototype/library/util/http"
 	"golang-project-prototype/library/util/logger"
 
+	"golang-project-prototype/controllers/internal"
 	"golang-project-prototype/model"
 	"net/url"
 )
 
 type MainController struct {
-	BaseController
+	internal.BaseController
 }
 
 func (c *MainController) Get() {
@@ -21,9 +22,9 @@ func (c *MainController) Get() {
 		GetByReceiver("http://jsonplaceholder.typicode.com/comments", values, &resp)
 	if err != nil {
 		logger.Error("请求失败", err)
-		c.renderErrorJSON(err, nil)
+		c.RenderErrorJSON(err, nil)
 		return
 	}
 
-	c.renderSuccessJSON("成功", resp)
+	c.RenderSuccessJSON("成功", resp)
 }
