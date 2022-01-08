@@ -1,5 +1,5 @@
 package service
 
-var User = userService{}
+var User = new(userService)
 
 type userService struct{}
